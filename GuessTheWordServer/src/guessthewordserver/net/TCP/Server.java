@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public class Server {
     Socket socket;
     ServerSocket serverSocket;
-    private AtomicBoolean listening;
+    private AtomicBoolean listening=new AtomicBoolean(false);
 
 
     public Server() throws IOException {
@@ -32,9 +32,10 @@ public class Server {
             while(listening.get()){
                 try {
                     Socket newSocket = serverSocket.accept();
+                    //create new Session
                     Session s = new Session(newSocket);
                     
-                    //create new Session
+                    
                 } catch (IOException ex) {
                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                 }
