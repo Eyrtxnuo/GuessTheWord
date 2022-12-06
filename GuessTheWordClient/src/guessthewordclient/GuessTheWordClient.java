@@ -1,5 +1,6 @@
 package GuessTheWordClient;
 
+import guessthewordclient.GameFrame;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,6 +19,7 @@ public class GuessTheWordClient {
     DataOutputStream output = null;
     InetAddress ip;
     String messaggio="";
+    GameFrame frame = new GameFrame();
 
     public GuessTheWordClient() throws UnknownHostException, IOException {
         ip = InetAddress.getLocalHost();
@@ -35,6 +37,8 @@ public class GuessTheWordClient {
 
         //thread2 invia
         client.writeMessageThread();
+        
+        client.frame.setVisible(true);
     }
 
     private void readMessageThread() {
@@ -52,12 +56,12 @@ public class GuessTheWordClient {
                             continue;
                         }
                         for (int i = 0; i < messChar.length; i++) {
-                            if(msgChar[i]=='!'){
-                                System.out.print("\u001B[32m"+messChar[i]+"\u001B[0m");
-                            }else if(msgChar[i]=='*'){
-                                System.out.print("\u001B[33m"+messChar[i]+"\u001B[0m");
-                            }else if(msgChar[i]=='?'){
-                                System.out.print("\u001B[31m"+messChar[i]+"\u001B[0m");
+                            switch (msgChar[i]) {
+                                case '!' -> System.out.print("\u001B[32m"+messChar[i]+"\u001B[0m");
+                                case '*' -> System.out.print("\u001B[33m"+messChar[i]+"\u001B[0m");
+                                case '?' -> System.out.print("\u001B[31m"+messChar[i]+"\u001B[0m");
+                                default -> {
+                                }
                             }
                         }
                     } catch (IOException ex) {
