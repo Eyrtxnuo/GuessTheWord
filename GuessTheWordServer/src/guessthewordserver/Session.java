@@ -40,7 +40,7 @@ public class Session extends Thread {
             while (running) {
                 String tentativo = read();
                 if (tentativo.equals(parola)) {
-                    write("Hai indovinato! la parola era: " + parola + "\nNuovo round:");
+                    write("#");
                     parola = GetParola();
                     System.out.println(parola);
                     continue;
