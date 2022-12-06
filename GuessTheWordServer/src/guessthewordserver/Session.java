@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
@@ -67,6 +68,8 @@ public class Session extends Thread {
                 write(new String(resp));
             }
             closeStream();
+        } catch (SocketException ex){
+            Logger.getLogger(Session.class.getName()).log(Level.INFO, "Client Disconnected!");
         } catch (IOException ex) {
             Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
         }
