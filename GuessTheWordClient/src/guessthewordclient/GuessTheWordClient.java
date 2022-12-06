@@ -17,6 +17,7 @@ public class GuessTheWordClient {
     DataInputStream input = null;
     DataOutputStream output = null;
     InetAddress ip;
+    String messaggio="";
 
     public GuessTheWordClient() throws UnknownHostException, IOException {
         ip = InetAddress.getLocalHost();
@@ -43,7 +44,22 @@ public class GuessTheWordClient {
                 while (true) {
                     try {
                         String msg = input.readUTF();
-                        log(msg);
+                        char[] msgChar = msg.toCharArray();
+                        char[] messChar = messaggio.toCharArray();
+                        if(msgChar[0]=='#'){
+                            System.out.println("Hai indovinato la parola!!");
+                            System.out.println("E' il momento di indovinarne un' altra");
+                            continue;
+                        }
+                        for (int i = 0; i < messChar.length; i++) {
+                            if(msgChar[i]=='!'){
+                                System.out.print("\u001B[32m"+messChar[i]+"\u001B[0m");
+                            }else if(msgChar[i]=='*'){
+                                System.out.print("\u001B[33m"+messChar[i]+"\u001B[0m");
+                            }else if(msgChar[i]=='?'){
+                                System.out.print("\u001B[31m"+messChar[i]+"\u001B[0m");
+                            }
+                        }
                     } catch (IOException ex) {
                         Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -60,12 +76,12 @@ public class GuessTheWordClient {
             public void run() {
                 while (true) {
                     try {
-                        String msg =scan.nextLine();
-                        while(msg.length()!=5){
+                        messaggio =scan.nextLine();
+                        while(messaggio.length()!=5){
                             System.out.println("Inserire una parola di 5 lettere");
-                            msg =scan.nextLine();
+                            messaggio =scan.nextLine();
                         }
-                        output.writeUTF(msg);
+                        output.writeUTF(messaggio);
                     } catch (IOException ex) {
                         Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
