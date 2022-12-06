@@ -24,3 +24,5 @@ hs_err_pid*
 /GuessTheWordServer/nbproject/private/
 /GuessTheWordServer/build/
 /GuessTheWordClient/nbproject/private/
+/GuessTheWordClient/build/
+/GuessTheWordClient/dist/
