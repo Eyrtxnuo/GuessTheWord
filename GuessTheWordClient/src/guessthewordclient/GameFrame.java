@@ -4,9 +4,14 @@
  */
 package guessthewordclient;
 
-import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import utils.LoadSave;
+import static utils.LoadSave.Sprites.*;
+import utils.Updater;
 
 /**
  *
@@ -19,8 +24,27 @@ public class GameFrame extends javax.swing.JFrame {
      */
     public GameFrame() {
         initComponents();
+        startFrameRendering();
     }
-
+    Updater frameRepainter = new Updater(() -> {
+            this.paint(this.getGraphics());
+            return null;
+        }, 60);
+    Updater gcCaller = new Updater(() -> {
+            System.gc();
+            return null;
+        }, 1);
+    
+    public void startFrameRendering(){
+        frameRepainter.startThread();
+        gcCaller.startThread();
+    }
+    
+    public void stopFrameRendering(){
+        frameRepainter.stopThread();
+        gcCaller.stopThread();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -31,24 +55,38 @@ public class GameFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setLocationByPlatform(true);
+        setName("Frame"); // NOI18N
+        setResizable(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 618, Short.MAX_VALUE)
+            .addGap(0, 1200, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 494, Short.MAX_VALUE)
+            .addGap(0, 700, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    int frames=0;
+    Font textFont = new Font("Serif",0, 40);
     @Override
-    public void paint(Graphics g) {
-        g.drawImage(LoadSave.LoadImage(LoadSave.Sprites.BACKGROUND.getPath()),0,0,WIDTH,HEIGHT, null);
+    public void paint(Graphics gScreen) {
+        Image imm = createVolatileImage(this.getWidth() - this.getInsets().left - this.getInsets().right, this.getHeight() - this.getInsets().top - this.getInsets().bottom);
+        Graphics g = imm.getGraphics();
+        
+        g.drawImage(LoadSave.getImage(BACKGROUND),0,0,imm.getWidth(this),imm.getHeight(this), this);
+        g.drawImage(LoadSave.getImage(SCRIVANIA),500,400,400,150, this);
+        g.setFont(textFont);
+        g.drawString("Frames: " + ++frames, 60, 50);
+        
+        gScreen.drawImage(imm, this.getInsets().left-1, this.getInsets().top, this);
+        g.dispose();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

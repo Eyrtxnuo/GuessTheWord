@@ -19,9 +19,11 @@ public class LoadSave {
     
     /** sprites path */
     public enum Sprites{
-        BACKGROUND("sala.png");
+        BACKGROUND("textures/salaLibera.png"),
+        SCRIVANIA("textures/scrivania.png"),
+        TIZIO("textures/tizio.png");
         
-        private String path;
+        private final String path;
 
         private Sprites(String path) {
             this.path = path;
@@ -31,10 +33,17 @@ public class LoadSave {
             return path;
         }
     } 
-    public static HashMap<Sprites,BufferedImage> fileCache = new HashMap<>();
+    public static HashMap<Sprites,BufferedImage> fileCache = new HashMap<>();//change to volatileimage
     
-    public static BufferedImage getImage(Sprites atlas){
+    public static synchronized BufferedImage getImage(Sprites atlas){
         if(!fileCache.containsKey(atlas)){
+            System.out.println("cache miss: "+atlas.getPath());
+            /*System.out.println("Printing stack trace:");
+            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+            for (int i = 1; i < elements.length; i++) {
+                 StackTraceElement s = elements[i];
+                 System.out.println("\tat " + s.getClassName() + "." + s.getMethodName() + "(" + s.getFileName() + ":" + s.getLineNumber() + ")");
+            }*/
             fileCache.put(atlas, LoadImage(atlas.getPath()));
         }
         return fileCache.get(atlas);
