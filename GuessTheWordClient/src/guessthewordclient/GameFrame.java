@@ -4,26 +4,28 @@
  */
 package guessthewordclient;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import utils.LoadSave;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import static utils.LoadSave.Sprites.*;
+import static utils.LoadSave.getImage;
 import utils.Updater;
 
 /**
  *
  * @author matti
  */
-public class GameFrame extends javax.swing.JFrame {
+public class GameFrame extends javax.swing.JFrame implements KeyListener{
 
     /**
      * Creates new form GameFrame
      */
     public GameFrame() {
         initComponents();
+        addKeyListener(this);
         startFrameRendering();
     }
     Updater frameRepainter = new Updater(() -> {
@@ -75,18 +77,55 @@ public class GameFrame extends javax.swing.JFrame {
     
     int frames=0;
     Font textFont = new Font("Serif",0, 40);
+    TextInput ti = new TextInput(725, 270);
     @Override
     public void paint(Graphics gScreen) {
         Image imm = createVolatileImage(this.getWidth() - this.getInsets().left - this.getInsets().right, this.getHeight() - this.getInsets().top - this.getInsets().bottom);
         Graphics g = imm.getGraphics();
-        
-        g.drawImage(LoadSave.getImage(BACKGROUND),0,0,imm.getWidth(this),imm.getHeight(this), this);
-        g.drawImage(LoadSave.getImage(SCRIVANIA),500,400,400,150, this);
+        float mov = frames*0.3f;
+        g.drawImage(getImage(BACKGROUND),0,0,imm.getWidth(this),imm.getHeight(this), this);
+        if(result){
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(750, 174, 271, 178);
+        }
+        g.drawImage(getImage(TIZIO), 550+(int) (mov%14-(mov%14-7)*(mov%14-7>0?2:0)), 200+(int) (mov%10-(mov%10-5)*(mov%10-5>0?2:0)), this);
+        g.drawImage(getImage(SCRIVANIA),500,350,400,130, this);
         g.setFont(textFont);
         g.drawString("Frames: " + ++frames, 60, 50);
-        
+        ti.draw(g);
         gScreen.drawImage(imm, this.getInsets().left-1, this.getInsets().top, this);
         g.dispose();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    private boolean result = false;
+    private boolean gotIt = false;
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_ENTER){
+            if(result == true){
+                ti.setText("");
+                result = false;
+            }
+            if(ti.getText().length()==5){
+                
+                gotIt = true; //test if word is right
+                result = true;
+            }
+            
+            return;
+        }
+        if(!result){
+            ti.processKeyEvent(e);
+        }
+        //System.out.println(e.getKeyChar()+":"+e.getKeyCode());
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
