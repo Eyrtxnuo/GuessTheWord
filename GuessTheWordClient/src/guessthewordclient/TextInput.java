@@ -31,7 +31,7 @@ public class TextInput {
 
     private int cursorIndex = 0;
 
-    private String text = "parol";
+    private String text = "";
     private int leftSkipped = 0;
     private int rightSkipped = 0;
 
@@ -40,7 +40,7 @@ public class TextInput {
     private static final String PREFIX = "…";
     private static final String SUFFIX = "…";
 
-    private Font font = LoadSave.RegisterFont("minecraft-gnu-font.otf").deriveFont(50 * SCALE);
+    private final Font font = LoadSave.RegisterFont("minecraft-gnu-font.otf").deriveFont(50 * SCALE);
 
     private int animTick;
     private final int animSpeed = 100;
@@ -51,6 +51,8 @@ public class TextInput {
     private final int leftBorder = (int) (new Canvas().getFontMetrics(font).stringWidth(PREFIX) + 4 * SCALE);
     private final int rightBorder = (int) (new Canvas().getFontMetrics(font).stringWidth(SUFFIX) + 4 * SCALE);
     private final int upperBorder = (int) (9 * SCALE);
+    
+    
 
     public TextInput(int xPos, int yPos) {
 
@@ -63,6 +65,11 @@ public class TextInput {
         bounds = new Rectangle(xPos, yPos - yOffestCenter, TI_WIDTH, TI_HEIGHT);
     }
 
+    String colorMap="";
+    public void setColorMap(String colorMap){
+        this.colorMap = colorMap;
+    }
+    
     public void draw(Graphics g) {
 
         //g.drawImage(imgs[index], xPos, yPos - yOffestCenter, bounds.width, bounds.height, null);
@@ -72,10 +79,21 @@ public class TextInput {
         g.setFont(font);
         String printText = text;
         int xOffset = 0;
-
+        int forIndex = 0;
         for (char ch : printText.toCharArray()) {
+            if(forIndex<colorMap.length()){
+                switch(colorMap.charAt(forIndex)){
+                    case '!' -> g.setColor(Color.GREEN);
+                    case '*' -> g.setColor(Color.ORANGE);
+                    case '?' -> g.setColor(Color.GRAY);
+                    default -> g.setColor(Color.BLACK);
+                }
+            }else{
+                g.setColor(Color.BLACK);
+            }
             g.drawString(ch + "", (int) (xPos + leftBorder + xOffset), (int) (yPos + upperBorder));
             xOffset += Math.max(minCharWidth, g.getFontMetrics().charWidth(ch));
+            forIndex++;
         }
 
         g.setColor(old);
@@ -172,17 +190,6 @@ public class TextInput {
     
     public void setText(String text) {
         this.text =  text;
-    }
-
-    private int getCursorIndexAtposition(int xRelativePos) {
-        float x = xRelativePos - leftBorder;
-        FontMetrics Fm = new Canvas().getFontMetrics(font);
-        String displayed = text.substring(leftSkipped, text.length() - rightSkipped);
-        int attempt = displayed.length();
-        while (attempt > 0 && Fm.stringWidth(displayed.substring(0, attempt)) > xRelativePos) {
-            attempt--;
-        }
-        return (displayed.length() - attempt) + rightSkipped;
     }
 
     public static class TextInputValues {

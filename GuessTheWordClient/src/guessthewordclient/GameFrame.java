@@ -10,6 +10,10 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static utils.LoadSave.Sprites.*;
 import static utils.LoadSave.getImage;
 import utils.Updater;
@@ -23,7 +27,10 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
     /**
      * Creates new form GameFrame
      */
-    public GameFrame() {
+    DataOutputStream output;
+    
+    public GameFrame(DataOutputStream output) {
+        this.output = output;
         initComponents();
         addKeyListener(this);
         startFrameRendering();
@@ -85,7 +92,14 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
         float mov = frames*0.3f;
         g.drawImage(getImage(BACKGROUND),0,0,imm.getWidth(this),imm.getHeight(this), this);
         if(result){
-            g.setColor(Color.LIGHT_GRAY);
+            if(gotIt==null){
+                g.setColor( Color.LIGHT_GRAY);
+            }else if(gotIt==true){
+                g.setColor( Color.GREEN);
+            }else if(gotIt==false){
+                g.setColor( Color.RED);
+            }
+            
             g.fillRect(750, 174, 271, 178);
         }
         g.drawImage(getImage(TIZIO), 550+(int) (mov%14-(mov%14-7)*(mov%14-7>0?2:0)), 200+(int) (mov%10-(mov%10-5)*(mov%10-5>0?2:0)), this);
@@ -93,7 +107,7 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
         g.setFont(textFont);
         g.drawString("Frames: " + ++frames, 60, 50);
         ti.draw(g);
-        gScreen.drawImage(imm, this.getInsets().left-1, this.getInsets().top, this);
+        gScreen.drawImage(imm, this.getInsets().left, this.getInsets().top, this);
         g.dispose();
     }
 
@@ -102,21 +116,29 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
     }
 
     private boolean result = false;
-    private boolean gotIt = false;
+    Boolean gotIt = false;
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_ENTER){
             if(result == true){
                 ti.setText("");
                 result = false;
+                ti.setColorMap("");
+                return;
             }
             if(ti.getText().length()==5){
-                
-                gotIt = true; //test if word is right
-                result = true;
+                try {
+                    gotIt = null;
+                    output.writeUTF(ti.getText());
+                    result = true;
+                    return;
+                } catch (IOException ex) {
+                    Logger.getLogger(GameFrame.class.getName()).log(Level.SEVERE, null, ex);
+                    result = false;
+                }
             }
             
-            return;
+            
         }
         if(!result){
             ti.processKeyEvent(e);
@@ -128,6 +150,19 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
     public void keyReleased(KeyEvent e) {
     }
 
+    public Boolean isGotIt() {
+        return gotIt;
+    }
+
+    public void setGotIt(Boolean gotIt) {
+        this.gotIt = gotIt;
+    }
+
+    
+    public void setInputColorMap(String ColorMap){
+        ti.setColorMap(ColorMap);
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }

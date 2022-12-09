@@ -38,7 +38,7 @@ public class Session extends Thread {
         try {
             running = true;
             while (running) {
-                String tentativo = read();
+                String tentativo = read().toLowerCase();
                 if (tentativo.equals(parola)) {
                     write("#");
                     parola = GetParola();

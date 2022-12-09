@@ -19,14 +19,15 @@ public class GuessTheWordClient {
     DataOutputStream output = null;
     InetAddress ip;
     String messaggio="";
-    GameFrame frame = new GameFrame();
+    GameFrame frame;
 
     public GuessTheWordClient() throws UnknownHostException, IOException {
         ip = InetAddress.getLocalHost();
         socket = new Socket(ip, 5763);
         input = new DataInputStream(socket.getInputStream());
         output = new DataOutputStream(socket.getOutputStream());
-        scan = new Scanner(System.in);
+        frame = new GameFrame(output);
+        //scan = new Scanner(System.in);
     }
 
     public static void main(String[] args) throws IOException {
@@ -36,7 +37,7 @@ public class GuessTheWordClient {
         client.readMessageThread();
 
         //thread2 invia
-        client.writeMessageThread();
+        //client.writeMessageThread();//implementato nella grafica
         
         client.frame.setVisible(true);
     }
@@ -48,12 +49,17 @@ public class GuessTheWordClient {
                 while (true) {
                     try {
                         String msg = input.readUTF();
+                        System.out.println(msg);
                         char[] msgChar = msg.toCharArray();
                         char[] messChar = messaggio.toCharArray();
                         if(msgChar[0]=='#'){
                             System.out.println("Hai indovinato la parola!!");
                             System.out.println("E' il momento di indovinarne un' altra");
+                            frame.setGotIt(true);
                             continue;
+                        }else{
+                            frame.setGotIt(false);
+                            frame.setInputColorMap(msg);
                         }
                         for (int i = 0; i < messChar.length; i++) {
                             switch (msgChar[i]) {
@@ -94,6 +100,15 @@ public class GuessTheWordClient {
             }
         });
         writemessage.start();
+    }
+    
+    public void writeMessage(String message) throws IOException{
+        messaggio =scan.nextLine();
+        while(messaggio.length()!=5){
+            System.out.println("Inserire una parola di 5 lettere");
+            messaggio =scan.nextLine();
+        }
+        output.writeUTF(messaggio);
     }
 
     private void log(String msg) {
