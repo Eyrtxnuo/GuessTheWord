@@ -17,7 +17,7 @@ public class GuessTheWordClient {
     DataInputStream input = null;
     DataOutputStream output = null;
     InetAddress ip;
-    String messaggio="";
+    String messaggio = "";
 
     public GuessTheWordClient() throws UnknownHostException, IOException {
         ip = InetAddress.getLocalHost();
@@ -41,29 +41,39 @@ public class GuessTheWordClient {
         Thread readmessage = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
-                    try {
+                try {
+                    while (true) {
                         String msg = input.readUTF();
                         char[] msgChar = msg.toCharArray();
                         char[] messChar = messaggio.toCharArray();
-                        if(msgChar[0]=='#'){
+                        if (msgChar[0] == '#') {
                             System.out.println("Hai indovinato la parola!!");
                             System.out.println("E' il momento di indovinarne un' altra");
                             continue;
+                        } else if (msgChar[0] == '§') {
+                            msg=msg.substring(1);
+                            System.out.println("Classifica");
+                            System.out.println(msg);
+                            socket.close();
+                            continue;
                         }
                         for (int i = 0; i < messChar.length; i++) {
-                            if(msgChar[i]=='!'){
-                                System.out.print("\u001B[32m"+messChar[i]+"\u001B[0m");
-                            }else if(msgChar[i]=='*'){
-                                System.out.print("\u001B[33m"+messChar[i]+"\u001B[0m");
-                            }else if(msgChar[i]=='?'){
-                                System.out.print("\u001B[31m"+messChar[i]+"\u001B[0m");
+                            if (msgChar[i] == '!') {
+                                System.out.print("\u001B[32m" + messChar[i] + "\u001B[0m");
+                            } else if (msgChar[i] == '*') {
+                                System.out.print("\u001B[33m" + messChar[i] + "\u001B[0m");
+                            } else if (msgChar[i] == '?') {
+                                System.out.print("\u001B[31m" + messChar[i] + "\u001B[0m");
                             }
                         }
-                    } catch (IOException ex) {
-                        Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
+                } catch (IOException ex) {
+                    try {
+                        socket.close();
+                    } catch (IOException ex1) {
+                        Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex1);
+                    }
+                    Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, "Server disconnected");
                 }
             }
         });
@@ -76,10 +86,10 @@ public class GuessTheWordClient {
             public void run() {
                 while (true) {
                     try {
-                        messaggio =scan.nextLine();
-                        while(messaggio.length()!=5){
+                        messaggio = scan.nextLine();
+                        while (messaggio.length() != 5) {
                             System.out.println("Inserire una parola di 5 lettere");
-                            messaggio =scan.nextLine();
+                            messaggio = scan.nextLine();
                         }
                         output.writeUTF(messaggio);
                     } catch (IOException ex) {
