@@ -52,12 +52,18 @@ public class GuessTheWordClient {
                         System.out.println(msg);
                         char[] msgChar = msg.toCharArray();
                         char[] messChar = messaggio.toCharArray();
-                        if(msgChar[0]=='#'){
+                        if (msgChar[0] == '#') {
                             System.out.println("Hai indovinato la parola!!");
                             System.out.println("E' il momento di indovinarne un' altra");
                             frame.setGotIt(true);
                             continue;
-                        }else{
+                        }else if (msgChar[0] == '§') {
+                            msg=msg.substring(1);
+                            System.out.println("Classifica");
+                            System.out.println(msg);
+                            socket.close();
+                            continue;
+                        }else {
                             frame.setGotIt(false);
                             frame.setInputColorMap(msg);
                         }
@@ -72,7 +78,12 @@ public class GuessTheWordClient {
                         }
                     }
                 } catch (IOException ex) {
-                    Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex);
+                    try {
+                        socket.close();
+                    } catch (IOException ex1) {
+                        Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex1);
+                    }
+                    Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, "Server disconnected");
                 }
             }
         });
@@ -85,10 +96,10 @@ public class GuessTheWordClient {
             public void run() {
                 while (true) {
                     try {
-                        messaggio =scan.nextLine();
-                        while(messaggio.length()!=5){
+                        messaggio = scan.nextLine();
+                        while (messaggio.length() != 5) {
                             System.out.println("Inserire una parola di 5 lettere");
-                            messaggio =scan.nextLine();
+                            messaggio = scan.nextLine();
                         }
                         output.writeUTF(messaggio);
                     } catch (IOException ex) {

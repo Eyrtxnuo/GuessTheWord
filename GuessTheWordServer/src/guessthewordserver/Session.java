@@ -3,7 +3,10 @@ package guessthewordserver;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.net.Socket;
 import java.net.SocketException;
@@ -11,6 +14,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -19,6 +23,7 @@ public class Session extends Thread {
 
     String parola;
     int tentativi = 0;
+    int paroleIndovinate = 0;
     boolean running;
     Socket conn;
     private final DataInputStream input;
@@ -36,10 +41,30 @@ public class Session extends Thread {
     @Override
     public void run() {
         try {
-            running = true;
-            while (running) {
+            while (paroleIndovinate < 5) {
                 String tentativo = read().toLowerCase();
+                tentativi++;
                 if (tentativo.equals(parola)) {
+                    paroleIndovinate++;
+                    if (paroleIndovinate == 1) {
+                        try {
+                            File folder = new File(Session.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+                            File file = new File(folder.getAbsolutePath() + "\\classifica.csv");
+                            file.createNewFile();
+                            Scanner myReader = new Scanner(file);
+                            String data = "";
+                            while (myReader.hasNextLine()) {
+                                data += myReader.nextLine() + "\n";
+                            }
+                            write(data);
+                            myReader.close();
+                        } catch (URISyntaxException ex) {
+                            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IOException ex) {
+                            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        continue;
+                    }
                     write("#");
                     parola = GetParola();
                     System.out.println(parola);
@@ -52,7 +77,7 @@ public class Session extends Thread {
                 for (int i = 0; i < parola.length() && i < lettereTentativo.length; i++) {
                     if (parola.charAt(i) == lettereTentativo[i]) {
                         resp[i] = '!';
-                        lettereParola.remove((Object)parola.charAt(i));
+                        lettereParola.remove((Object) parola.charAt(i));
                     }
                 }
                 for (int i = 0; i < resp.length; i++) {
@@ -68,7 +93,7 @@ public class Session extends Thread {
                 write(new String(resp));
             }
             closeStream();
-        } catch (SocketException ex){
+        } catch (SocketException ex) {
             Logger.getLogger(Session.class.getName()).log(Level.INFO, "Client Disconnected!");
         } catch (IOException ex) {
             Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
@@ -106,6 +131,26 @@ public class Session extends Thread {
             raf.seek(getRandomNumber(0, lines) * 7);
             return raf.readLine();
         } catch (URISyntaxException | IOException ex) {
+            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public static String writeTo() {
+        try {
+            File folder = new File(Session.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
+            File file = new File(folder.getAbsolutePath() + "\\classifica.csv");
+            file.createNewFile();
+            Scanner myReader = new Scanner(file);
+            while (myReader.hasNextLine()) {
+                String data = myReader.nextLine();
+                System.out.println(data);
+            }
+            myReader.close();
+            return file.getAbsolutePath();
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
