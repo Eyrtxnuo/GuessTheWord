@@ -40,7 +40,7 @@ public class TextInput {
     private static final String PREFIX = "…";
     private static final String SUFFIX = "…";
 
-    private final Font font = LoadSave.RegisterFont("minecraft-gnu-font.otf").deriveFont(50 * SCALE);
+    private final Font font = LoadSave.getOrRegisterFont("minecraft-gnu-font.otf","Minecraft").deriveFont(50 * SCALE);
 
     private int animTick;
     private final int animSpeed = 100;

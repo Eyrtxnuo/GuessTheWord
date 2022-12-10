@@ -14,6 +14,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import utils.LoadSave;
 import static utils.LoadSave.Sprites.*;
 import static utils.LoadSave.getImage;
 import utils.Updater;
@@ -106,6 +107,11 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
         g.drawImage(getImage(SCRIVANIA),500,350,400,130, this);
         g.setFont(textFont);
         g.drawString("Frames: " + ++frames, 60, 50);
+        g.setFont(g.getFont().deriveFont(30f));
+        
+        g.drawString("10", 240, 375);
+        g.setColor(Color.red);
+        g.fillRect(236, 348, 46, 30);
         ti.draw(g);
         gScreen.drawImage(imm, this.getInsets().left, this.getInsets().top, this);
         g.dispose();

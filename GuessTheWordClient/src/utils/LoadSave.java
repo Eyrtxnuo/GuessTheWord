@@ -77,14 +77,33 @@ public class LoadSave {
      * @param PathToFont path to the font file (*.otf and *.ttf are supported)
      * @return the newly created font reference, this Font can now be used in Graphics
      */
-    public static Font RegisterFont(String PathToFont) {
+    public static Font RegisterFont(String PathToFont, String name) {
         try {
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             Font newFont = Font.createFont(Font.TRUETYPE_FONT, LoadSave.class.getResourceAsStream("/font/"+PathToFont));
             ge.registerFont(newFont);
+            fontCache.put(name, newFont);
             return newFont;
         } catch (IOException|FontFormatException e) {
             return null;
         }
+    }
+    
+    public static HashMap<String,Font> fontCache = new HashMap<>();
+    
+    public static Font getFont(String Name){
+        return fontCache.get(Name);
+    }
+    
+    public static Font getOrRegisterFont(String PathToFont, String name){
+        if(fontCache.containsKey(name)){
+            return getFont(name);
+        }else{
+            return RegisterFont(PathToFont, name);
+        }
+    }
+    
+    {
+        getOrRegisterFont("minecraft-gnu-font.otf","Minecraft");
     }
 }

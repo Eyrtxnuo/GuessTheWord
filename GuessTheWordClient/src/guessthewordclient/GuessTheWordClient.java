@@ -46,8 +46,8 @@ public class GuessTheWordClient {
         Thread readmessage = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
-                    try {
+                try {
+                    while (true) {
                         String msg = input.readUTF();
                         System.out.println(msg);
                         char[] msgChar = msg.toCharArray();
@@ -70,10 +70,9 @@ public class GuessTheWordClient {
                                 }
                             }
                         }
-                    } catch (IOException ex) {
-                        Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
+                } catch (IOException ex) {
+                    Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
