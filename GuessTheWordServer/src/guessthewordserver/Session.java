@@ -3,17 +3,13 @@ package guessthewordserver;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +20,7 @@ public class Session extends Thread {
     String parola;
     int tentativi = 0;
     int paroleIndovinate = 0;
+    int paroleDaIndovinare = 1;
     boolean running;
     Socket conn;
     private final DataInputStream input;
@@ -41,26 +38,32 @@ public class Session extends Thread {
     @Override
     public void run() {
         try {
-            while (paroleIndovinate < 5) {
+            while (paroleIndovinate < paroleDaIndovinare) {
                 String tentativo = read().toLowerCase();
                 tentativi++;
                 if (tentativo.equals(parola)) {
                     paroleIndovinate++;
-                    if (paroleIndovinate == 1) {
+                    if (paroleIndovinate == paroleDaIndovinare) {
                         try {
                             File folder = new File(Session.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
                             File file = new File(folder.getAbsolutePath() + "\\classifica.csv");
                             file.createNewFile();
-                            Scanner myReader = new Scanner(file);
-                            String data = "";
-                            while (myReader.hasNextLine()) {
-                                data += myReader.nextLine() + "\n";
+                            
+                            write("§");
+                            String Username = read();
+                            try (FileWriter writer = new FileWriter(file,true)) {
+                                writer.write(Username+";"+tentativi+"\n");
+                                
                             }
-                            write(data);
-                            myReader.close();
+                            try (Scanner myReader = new Scanner(file)) {
+                                
+                                String data = "";
+                                while (myReader.hasNextLine()) {
+                                    data += myReader.nextLine() + "\n";
+                                }
+                                write(data);
+                            }
                         } catch (URISyntaxException ex) {
-                            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
                             Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         continue;

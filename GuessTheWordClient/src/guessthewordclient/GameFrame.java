@@ -29,7 +29,8 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
      * Creates new form GameFrame
      */
     DataOutputStream output;
-    
+    boolean playing = true;
+
     public GameFrame(DataOutputStream output) {
         this.output = output;
         initComponents();
@@ -125,7 +126,7 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
     Boolean gotIt = false;
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_ENTER){
+        if(e.getKeyCode() == KeyEvent.VK_ENTER && playing){
             if(result == true){
                 ti.setText("");
                 result = false;
@@ -168,6 +169,15 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
     public void setInputColorMap(String ColorMap){
         ti.setColorMap(ColorMap);
     }
+
+    public boolean isPlaying() {
+        return playing;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playing = playing;
+    }
+    
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables

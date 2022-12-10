@@ -1,5 +1,6 @@
 package GuessTheWordClient;
 
+import guessthewordclient.Classifica;
 import guessthewordclient.GameFrame;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -42,14 +43,15 @@ public class GuessTheWordClient {
         client.frame.setVisible(true);
     }
 
+    
     private void readMessageThread() {
         Thread readmessage = new Thread(new Runnable() {
-            @Override
+            @Override  //sium//
             public void run() {
                 try {
                     while (true) {
                         String msg = input.readUTF();
-                        System.out.println(msg);
+                        //System.out.println(msg);
                         char[] msgChar = msg.toCharArray();
                         char[] messChar = messaggio.toCharArray();
                         if (msgChar[0] == '#') {
@@ -58,9 +60,11 @@ public class GuessTheWordClient {
                             frame.setGotIt(true);
                             continue;
                         }else if (msgChar[0] == '§') {
-                            msg=msg.substring(1);
-                            System.out.println("Classifica");
-                            System.out.println(msg);
+                            //Winning transaction
+                            frame.setGotIt(true);
+                            frame.setPlaying(false);
+                            new Classifica(socket);  
+                            //output.write(0);
                             socket.close();
                             continue;
                         }else {
