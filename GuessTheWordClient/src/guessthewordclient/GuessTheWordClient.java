@@ -2,6 +2,7 @@ package GuessTheWordClient;
 
 import guessthewordclient.Classifica;
 import guessthewordclient.GameFrame;
+import guessthewordclient.KeyboardKey;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -46,14 +47,14 @@ public class GuessTheWordClient {
     
     private void readMessageThread() {
         Thread readmessage = new Thread(new Runnable() {
-            @Override  //sium//
+            @Override  
             public void run() {
                 try {
                     while (true) {
                         String msg = input.readUTF();
                         //System.out.println(msg);
                         char[] msgChar = msg.toCharArray();
-                        char[] messChar = messaggio.toCharArray();
+                        char[] messChar = frame.getText().toLowerCase().toCharArray();
                         if (msgChar[0] == '#') {
                             System.out.println("Hai indovinato la parola!!");
                             System.out.println("E' il momento di indovinarne un' altra");
@@ -73,13 +74,23 @@ public class GuessTheWordClient {
                         }
                         for (int i = 0; i < messChar.length; i++) {
                             switch (msgChar[i]) {
-                                case '!' -> System.out.print("\u001B[32m"+messChar[i]+"\u001B[0m");
-                                case '*' -> System.out.print("\u001B[33m"+messChar[i]+"\u001B[0m");
-                                case '?' -> System.out.print("\u001B[31m"+messChar[i]+"\u001B[0m");
+                                case '!' -> {
+                                    GameFrame.setCharStatus(messChar[i], KeyboardKey.STATUS.FOUND);
+                                    System.out.print("\u001B[32m"+messChar[i]+"\u001B[0m");
+                                }
+                                case '*' -> {
+                                    GameFrame.setCharStatus(messChar[i], KeyboardKey.STATUS.PRESENT);
+                                    System.out.print("\u001B[33m"+messChar[i]+"\u001B[0m");
+                                }
+                                case '?' -> {
+                                    GameFrame.setCharStatus(messChar[i], KeyboardKey.STATUS.NOT_PRESENT);
+                                    System.out.print("\u001B[31m"+messChar[i]+"\u001B[0m");
+                                }
                                 default -> {
                                 }
                             }
                         }
+                        System.out.println();
                     }
                 } catch (IOException ex) {
                     try {

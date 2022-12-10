@@ -7,14 +7,20 @@ package guessthewordclient;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import utils.LoadSave;
 import static utils.LoadSave.Sprites.*;
 import static utils.LoadSave.getImage;
 import utils.Updater;
@@ -23,18 +29,22 @@ import utils.Updater;
  *
  * @author matti
  */
-public class GameFrame extends javax.swing.JFrame implements KeyListener{
-
+public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusListener{
+    
+    
     /**
      * Creates new form GameFrame
      */
     DataOutputStream output;
     boolean playing = true;
+    
+    
 
     public GameFrame(DataOutputStream output) {
         this.output = output;
         initComponents();
         addKeyListener(this);
+        addFocusListener(this);
         startFrameRendering();
     }
     Updater frameRepainter = new Updater(() -> {
@@ -87,10 +97,11 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
     int frames=0;
     Font textFont = new Font("Serif",0, 40);
     TextInput ti = new TextInput(725, 270);
+    KeyboardGraphics kb = new KeyboardGraphics(250, 438, this);
     @Override
     public void paint(Graphics gScreen) {
         Image imm = createVolatileImage(this.getWidth() - this.getInsets().left - this.getInsets().right, this.getHeight() - this.getInsets().top - this.getInsets().bottom);
-        Graphics g = imm.getGraphics();
+        Graphics2D g = (Graphics2D)imm.getGraphics();
         float mov = frames*0.3f;
         g.drawImage(getImage(BACKGROUND),0,0,imm.getWidth(this),imm.getHeight(this), this);
         if(result){
@@ -113,17 +124,65 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
         g.drawString("10", 240, 375);
         g.setColor(Color.red);
         g.fillRect(236, 348, 46, 30);
+        
+        g.setColor(new Color(204,205,209));
+        //g.fillRoundRect(250, 438, 700, 250, 40, 40);
+        kb.draw(g);
+        //g.drawImage(getImage(TASTIERA), 250, 438, 700, 250, this);
+        
         ti.draw(g);
         gScreen.drawImage(imm, this.getInsets().left, this.getInsets().top, this);
         g.dispose();
     }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
+    
+    
+    public static HashMap<Character,KeyboardKey.STATUS> charStatus = new HashMap<>();
+    
+    public static KeyboardKey.STATUS getCharStatus(Character c){
+        if(!charStatus.containsKey(c)){
+            return KeyboardKey.STATUS.NONE;
+        }
+        return charStatus.get(c);
+    }
+    
+    public static void setCharStatus(char c, KeyboardKey.STATUS status) {
+        if(!charStatus.containsKey(c)){
+            charStatus.put(c, status);
+        }
+        if(charStatus.get(c).ordinal()<status.ordinal()){
+            charStatus.put(c, status);
+        }
     }
 
+
+    public Boolean isGotIt() {
+        return gotIt;
+    }
+
+    public void setGotIt(Boolean gotIt) {
+        this.gotIt = gotIt;
+    }
+
+    
+    public void setInputColorMap(String ColorMap){
+        ti.setColorMap(ColorMap);
+    }
+
+    public boolean isPlaying() {
+        return playing;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playing = playing;
+    }
+    
+    public String getText(){
+        return ti.getText();
+    }
+    
     private boolean result = false;
     Boolean gotIt = false;
+    
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_ENTER && playing){
@@ -152,30 +211,28 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener{
         }
         //System.out.println(e.getKeyChar()+":"+e.getKeyCode());
     }
+    
+    
+    public static HashSet<Character> pressedChars = new HashSet<>();
+    
+    @Override
+    public void keyTyped(KeyEvent e) {
+        pressedChars.add(Character.toLowerCase(e.getKeyChar()));
+    }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        pressedChars.remove(Character.toLowerCase(e.getKeyChar()));
     }
-
-    public Boolean isGotIt() {
-        return gotIt;
-    }
-
-    public void setGotIt(Boolean gotIt) {
-        this.gotIt = gotIt;
-    }
-
     
-    public void setInputColorMap(String ColorMap){
-        ti.setColorMap(ColorMap);
+    
+    @Override
+    public void focusGained(FocusEvent e) {
     }
 
-    public boolean isPlaying() {
-        return playing;
-    }
-
-    public void setPlaying(boolean playing) {
-        this.playing = playing;
+    @Override
+    public void focusLost(FocusEvent e) {
+        pressedChars.clear();
     }
     
     

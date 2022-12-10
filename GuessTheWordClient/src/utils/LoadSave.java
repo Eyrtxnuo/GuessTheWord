@@ -21,7 +21,8 @@ public class LoadSave {
     public enum Sprites{
         BACKGROUND("textures/salaLibera.png"),
         SCRIVANIA("textures/scrivania.png"),
-        TIZIO("textures/tizio.png");
+        TIZIO("textures/tizio.png"),
+        TASTIERA("textures/keyboard.png");
         
         private final String path;
 
