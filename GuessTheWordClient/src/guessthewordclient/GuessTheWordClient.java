@@ -30,6 +30,7 @@ public class GuessTheWordClient {
     public static void main(String[] args) throws IOException {
         GuessTheWordClient client = new GuessTheWordClient();
 
+        client.nomeUtente();
         //thread1 riceve
         client.readMessageThread();
 
@@ -51,7 +52,8 @@ public class GuessTheWordClient {
                             System.out.println("E' il momento di indovinarne un' altra");
                             continue;
                         } else if (msgChar[0] == '§') {
-                            msg=msg.substring(1);
+                            System.out.println("Gioco completato");
+                            msg = msg.substring(1);
                             System.out.println("Classifica");
                             System.out.println(msg);
                             socket.close();
@@ -102,8 +104,10 @@ public class GuessTheWordClient {
         writemessage.start();
     }
 
-    private void log(String msg) {
-        System.out.println(msg);
+    private void nomeUtente() throws IOException {
+        System.out.println("Come vuoi essere salvato nella classifica?");
+        String nome = scan.nextLine();
+        output.writeUTF("(" + nome);
     }
 
 }

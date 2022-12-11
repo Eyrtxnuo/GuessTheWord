@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -28,6 +29,7 @@ public class Session extends Thread {
     Socket conn;
     private final DataInputStream input;
     private final DataOutputStream output;
+    String nomeUtente = "";
 
     public Session(Socket conn) throws IOException {
         this.conn = conn;
@@ -43,59 +45,68 @@ public class Session extends Thread {
         try {
             while (paroleIndovinate < 1) {
                 String tentativo = read();
-                tentativi++;
-                if (tentativo.equals(parola)) {
-                    paroleIndovinate++;
-                    if (paroleIndovinate == 1) {
-                        try {
+                if (tentativo.startsWith("(")) {
+                    nomeUtente = tentativo;
+                    nomeUtente=nomeUtente.substring(1);
+                } else {
+                    tentativi++;
+                    if (tentativo.equals(parola)) {
+                        paroleIndovinate++;
+                        if (paroleIndovinate == 1) {
                             File folder = new File(Session.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
                             File file = new File(folder.getAbsolutePath() + "\\classifica.csv");
-                            file.createNewFile();
-                            Scanner myReader = new Scanner(file);
-                            String data = "";
-                            while (myReader.hasNextLine()) {
-                                data += myReader.nextLine() + "\n";
+                            FileWriter fr = new FileWriter(file, true);
+                            fr.write(nomeUtente+": "+tentativi+"\n");
+                            fr.close();
+                            try {
+                                file.createNewFile();
+                                Scanner myReader = new Scanner(file);
+                                String data = "";
+                                while (myReader.hasNextLine()) {
+                                    data += myReader.nextLine() + "\n";
+                                }
+                                write(data);
+                                myReader.close();
+                            } catch (IOException ex) {
+                                Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                            write(data);
-                            myReader.close();
-                        } catch (URISyntaxException ex) {
-                            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
-                        } catch (IOException ex) {
-                            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+                            continue;
                         }
+                        write("#");
+                        parola = GetParola();
+                        System.out.println(parola);
                         continue;
                     }
-                    write("#");
-                    parola = GetParola();
-                    System.out.println(parola);
-                    continue;
-                }
-                char[] resp = new char[parola.length()];
-                int found = 0;
-                var lettereParola = parola.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
-                var lettereTentativo = tentativo.toCharArray();
-                for (int i = 0; i < parola.length() && i < lettereTentativo.length; i++) {
-                    if (parola.charAt(i) == lettereTentativo[i]) {
-                        resp[i] = '!';
-                        lettereParola.remove((Object) parola.charAt(i));
+                    char[] resp = new char[parola.length()];
+                    int found = 0;
+                    var lettereParola = parola.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
+                    var lettereTentativo = tentativo.toCharArray();
+                    for (int i = 0; i < parola.length() && i < lettereTentativo.length; i++) {
+                        if (parola.charAt(i) == lettereTentativo[i]) {
+                            resp[i] = '!';
+                            lettereParola.remove((Object) parola.charAt(i));
+                        }
                     }
-                }
-                for (int i = 0; i < resp.length; i++) {
-                    if (resp[i] != 0) {
-                        continue;
+                    for (int i = 0; i < resp.length; i++) {
+                        if (resp[i] != 0) {
+                            continue;
+                        }
+                        if (i < lettereTentativo.length && lettereParola.remove((Object) lettereTentativo[i])) {
+                            resp[i] = '*';
+                        } else {
+                            resp[i] = '?';
+                        }
                     }
-                    if (i < lettereTentativo.length && lettereParola.remove((Object) lettereTentativo[i])) {
-                        resp[i] = '*';
-                    } else {
-                        resp[i] = '?';
-                    }
+                    write(new String(resp));
                 }
-                write(new String(resp));
             }
             closeStream();
+
         } catch (SocketException ex) {
             Logger.getLogger(Session.class.getName()).log(Level.INFO, "Client Disconnected!");
         } catch (IOException ex) {
+            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (URISyntaxException ex) {
             Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
