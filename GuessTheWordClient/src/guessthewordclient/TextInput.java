@@ -39,7 +39,7 @@ public class TextInput {
     private static final String PREFIX = "…";
     private static final String SUFFIX = "…";
 
-    private final Font font = LoadSave.getOrRegisterFont("minecraft-gnu-font.otf","Minecraft").deriveFont(50 * SCALE);
+    private final Font font = LoadSave.getOrRegisterFont("minecraft-gnu-font.otf", "Minecraft").deriveFont(50 * SCALE);
 
     private int animTick;
     private final int animSpeed = 100;
@@ -50,8 +50,6 @@ public class TextInput {
     private final int leftBorder = (int) (new Canvas().getFontMetrics(font).stringWidth(PREFIX) + 4 * SCALE);
     private final int rightBorder = (int) (new Canvas().getFontMetrics(font).stringWidth(SUFFIX) + 4 * SCALE);
     private final int upperBorder = (int) (9 * SCALE);
-    
-    
 
     public TextInput(int xPos, int yPos) {
 
@@ -64,11 +62,12 @@ public class TextInput {
         bounds = new Rectangle(xPos, yPos - yOffestCenter, TI_WIDTH, TI_HEIGHT);
     }
 
-    String colorMap="";
-    public void setColorMap(String colorMap){
+    String colorMap = "";
+
+    public void setColorMap(String colorMap) {
         this.colorMap = colorMap;
     }
-    
+
     public void draw(Graphics g) {
 
         //g.drawImage(imgs[index], xPos, yPos - yOffestCenter, bounds.width, bounds.height, null);
@@ -76,23 +75,45 @@ public class TextInput {
         g.setColor(Color.black);
 
         g.setFont(font);
-        String printText = text;
-        int xOffset = 0;
-        int forIndex = 0;
-        for (char ch : printText.toCharArray()) {
-            if(forIndex<colorMap.length()){
-                switch(colorMap.charAt(forIndex)){
-                    case '!' -> g.setColor(Color.GREEN);
-                    case '*' -> g.setColor(Color.ORANGE);
-                    case '?' -> g.setColor(Color.GRAY);
-                    default -> g.setColor(Color.BLACK);
+
+        //InputChars
+        {
+            String printText = text;
+            int xOffset = 0;
+            int forIndex = 0;
+            for (char ch : printText.toCharArray()) {
+                if (forIndex < colorMap.length()) {
+                    switch (colorMap.charAt(forIndex)) {
+                        case '!' ->
+                            g.setColor(Color.GREEN);
+                        case '*' ->
+                            g.setColor(Color.ORANGE);
+                        case '?' ->
+                            g.setColor(Color.GRAY);
+                        default ->
+                            g.setColor(Color.BLACK);
+                    }
+                } else {
+                    g.setColor(Color.BLACK);
                 }
-            }else{
-                g.setColor(Color.BLACK);
+                g.drawString(ch + "", (int) (xPos + leftBorder + xOffset), (int) (yPos + upperBorder));
+                xOffset += Math.max(minCharWidth, g.getFontMetrics().charWidth(ch));
+                forIndex++;
             }
-            g.drawString(ch + "", (int) (xPos + leftBorder + xOffset), (int) (yPos + upperBorder));
-            xOffset += Math.max(minCharWidth, g.getFontMetrics().charWidth(ch));
-            forIndex++;
+        }
+        //foundChars
+        {
+            int xOffset = 0;
+            int forIndex = 0;
+            g.setColor(new Color(0.3f, 1f, 0.3f, 0.5f));
+            for (int i = 0;i< GameFrame.foundChars.length; i++) {
+                char ch = GameFrame.foundChars[i];
+                if(i>text.length()-1){
+                    g.drawString(ch + "", (int) (xPos + leftBorder + xOffset), (int) (yPos + upperBorder));
+                }
+                xOffset += Math.max(minCharWidth, g.getFontMetrics().charWidth(ch));
+                forIndex++;
+            }
         }
 
         g.setColor(old);
@@ -186,9 +207,9 @@ public class TextInput {
     public String getText() {
         return text;
     }
-    
+
     public void setText(String text) {
-        this.text =  text;
+        this.text = text;
     }
 
     public static class TextInputValues {

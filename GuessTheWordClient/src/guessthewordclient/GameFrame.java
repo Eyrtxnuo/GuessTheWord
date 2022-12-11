@@ -183,6 +183,7 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
     private boolean result = false;
     Boolean gotIt = false;
     
+    
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_ENTER && playing){
@@ -190,6 +191,12 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
                 ti.setText("");
                 result = false;
                 ti.setColorMap("");
+                if(gotIt){
+                    charStatus.clear();
+                    for(int i = 0; i < foundChars.length; i++){
+                        foundChars[i] = ' ';
+                    }
+                }
                 return;
             }
             if(ti.getText().length()==5){
@@ -214,6 +221,7 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
     
     
     public static HashSet<Character> pressedChars = new HashSet<>();
+    public static char[] foundChars = {' ',' ',' ',' ',' '};
     
     @Override
     public void keyTyped(KeyEvent e) {

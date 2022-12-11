@@ -21,7 +21,6 @@ public class Session extends Thread {
     int tentativi = 0;
     int paroleIndovinate = 0;
     int paroleDaIndovinare = 1;
-    boolean running;
     Socket conn;
     private final DataInputStream input;
     private final DataOutputStream output;
@@ -74,7 +73,6 @@ public class Session extends Thread {
                     continue;
                 }
                 char[] resp = new char[parola.length()];
-                int found = 0;
                 var lettereParola = parola.chars().mapToObj(c -> (char) c).collect(Collectors.toList());
                 var lettereTentativo = tentativo.toCharArray();
                 for (int i = 0; i < parola.length() && i < lettereTentativo.length; i++) {

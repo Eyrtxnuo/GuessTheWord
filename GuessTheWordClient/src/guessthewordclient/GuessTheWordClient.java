@@ -76,6 +76,7 @@ public class GuessTheWordClient {
                             switch (msgChar[i]) {
                                 case '!' -> {
                                     GameFrame.setCharStatus(messChar[i], KeyboardKey.STATUS.FOUND);
+                                    GameFrame.foundChars[i] = messChar[i];
                                     System.out.print("\u001B[32m"+messChar[i]+"\u001B[0m");
                                 }
                                 case '*' -> {

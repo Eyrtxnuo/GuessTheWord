@@ -63,10 +63,14 @@ public class Classifica extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         jDialog1.setLocationByPlatform(true);
+        jDialog1.getRootPane().setDefaultButton(dialogOkButton);
 
         dialogNameField.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
 
         dialogOkButton.setText("Ok");
+        dialogOkButton.setDefaultCapable(false);
+        dialogOkButton.setInheritsPopupMenu(true);
+        dialogOkButton.setSelected(true);
         dialogOkButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dialogOkButtonActionPerformed(evt);
