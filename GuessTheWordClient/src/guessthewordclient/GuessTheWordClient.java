@@ -61,11 +61,23 @@ public class GuessTheWordClient {
                         }
                         for (int i = 0; i < messChar.length; i++) {
                             if (msgChar[i] == '!') {
-                                System.out.print("\u001B[32m" + messChar[i] + "\u001B[0m");
+                                if(i==messChar.length-1){
+                                    System.out.println("\u001B[32m" + messChar[i] + "\u001B[0m");
+                                }else{
+                                    System.out.print("\u001B[32m" + messChar[i] + "\u001B[0m");
+                                }                              
                             } else if (msgChar[i] == '*') {
-                                System.out.print("\u001B[33m" + messChar[i] + "\u001B[0m");
+                                if(i==messChar.length-1){
+                                    System.out.println("\u001B[33m" + messChar[i] + "\u001B[0m");
+                                }else{
+                                    System.out.print("\u001B[33m" + messChar[i] + "\u001B[0m");
+                                }                                 
                             } else if (msgChar[i] == '?') {
-                                System.out.print("\u001B[31m" + messChar[i] + "\u001B[0m");
+                                if(i==messChar.length-1){
+                                    System.out.println("\u001B[31m" + messChar[i] + "\u001B[0m");
+                                }else{
+                                    System.out.print("\u001B[31m" + messChar[i] + "\u001B[0m");
+                                }                             
                             }
                         }
                     }
