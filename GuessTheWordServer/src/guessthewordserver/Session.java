@@ -24,6 +24,7 @@ public class Session extends Thread {
     Socket conn;
     private final DataInputStream input;
     private final DataOutputStream output;
+    String nomeUtente = "";
 
     public Session(Socket conn) throws IOException {
         this.conn = conn;
@@ -55,7 +56,6 @@ public class Session extends Thread {
                                 
                             }
                             try (Scanner myReader = new Scanner(file)) {
-                                
                                 String data = "";
                                 while (myReader.hasNextLine()) {
                                     data += myReader.nextLine() + "\n";
@@ -65,6 +65,9 @@ public class Session extends Thread {
                         } catch (URISyntaxException ex) {
                             Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        write("#");
+                        parola = GetParola();
+                        System.out.println(parola);
                         continue;
                     }
                     write("#");
@@ -85,18 +88,26 @@ public class Session extends Thread {
                     if (resp[i] != 0) {
                         continue;
                     }
-                    if (i < lettereTentativo.length && lettereParola.remove((Object) lettereTentativo[i])) {
-                        resp[i] = '*';
-                    } else {
-                        resp[i] = '?';
+                    for (int i = 0; i < resp.length; i++) {
+                        if (resp[i] != 0) {
+                            continue;
+                        }
+                        if (i < lettereTentativo.length && lettereParola.remove((Object) lettereTentativo[i])) {
+                            resp[i] = '*';
+                        } else {
+                            resp[i] = '?';
+                        }
                     }
+                    write(new String(resp));
                 }
-                write(new String(resp));
             }
             closeStream();
+
         } catch (SocketException ex) {
             Logger.getLogger(Session.class.getName()).log(Level.INFO, "Client Disconnected!");
         } catch (IOException ex) {
+            Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (URISyntaxException ex) {
             Logger.getLogger(Session.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
