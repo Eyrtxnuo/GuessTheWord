@@ -8,8 +8,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -129,7 +127,7 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
         g.drawImage(getImage(SCRIVANIA),341,335,495,184, this);
         
         g.setFont(textFont);
-        g.drawString("Frames: " + ++frames, 60, 50);
+        //g.drawString("Frames: " + frames, 60, 50);
         g.setFont(g.getFont().deriveFont(30f));
         
         /*g.drawString(, 240, 375);
@@ -144,6 +142,7 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
         ti.draw(g);
         gScreen.drawImage(imm, this.getInsets().left, this.getInsets().top, this);
         g.dispose();
+        frames++;
     }
     
     

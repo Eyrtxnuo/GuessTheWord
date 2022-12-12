@@ -19,7 +19,7 @@ public class LoadSave {
     
     /** sprites path */
     public enum Sprites{
-        BACKGROUND("textures/template.png"),
+        BACKGROUND("textures/template-lowRes.png"),
         SCRIVANIA("textures/bancone.png"),
         TIZIO("textures/conduttore.png"),
         TASTIERA("textures/keyboard.png");
