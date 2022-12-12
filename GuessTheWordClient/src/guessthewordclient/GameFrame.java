@@ -96,7 +96,7 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
     
     int frames=0;
     Font textFont = new Font("Serif",0, 40);
-    TextInput ti = new TextInput(725, 270);
+    TextInput ti = new TextInput(360, 130);
     KeyboardGraphics kb = new KeyboardGraphics(250, 438, this);
     @Override
     public void paint(Graphics gScreen) {
@@ -113,17 +113,28 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
                 g.setColor( Color.RED);
             }
             
-            g.fillRect(750, 174, 271, 178);
+            g.fillRoundRect(360, 78, 475, 87,15, 13);
         }
-        g.drawImage(getImage(TIZIO), 550+(int) (mov%14-(mov%14-7)*(mov%14-7>0?2:0)), 200+(int) (mov%10-(mov%10-5)*(mov%10-5>0?2:0)), this);
-        g.drawImage(getImage(SCRIVANIA),500,350,400,130, this);
+        else
+        {   
+            g.setColor(Color.BLACK);
+            int xOffset = 30;
+            for(int i = 0; i<5;i++){
+                g.fillRect(360+xOffset, 150, 46, 5);
+                xOffset += 46*2;
+            }
+        }   
+        
+        g.drawImage(getImage(TIZIO), 500+(int) (mov%14-(mov%14-7)*(mov%14-7>0?2:0)), 190+(int) (mov%10-(mov%10-5)*(mov%10-5>0?2:0)), 250,250 , this);
+        g.drawImage(getImage(SCRIVANIA),341,335,495,184, this);
+        
         g.setFont(textFont);
         g.drawString("Frames: " + ++frames, 60, 50);
         g.setFont(g.getFont().deriveFont(30f));
         
-        g.drawString("10", 240, 375);
+        /*g.drawString(, 240, 375);
         g.setColor(Color.red);
-        g.fillRect(236, 348, 46, 30);
+        g.fillRect(236, 348, 46, 30);*/
         
         g.setColor(new Color(204,205,209));
         //g.fillRoundRect(250, 438, 700, 250, 40, 40);

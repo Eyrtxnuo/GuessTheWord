@@ -34,7 +34,7 @@ public class TextInput {
     private int leftSkipped = 0;
     private int rightSkipped = 0;
 
-    private int minCharWidth = 54;
+    private int minCharWidth = 92;
 
     private static final String PREFIX = "…";
     private static final String SUFFIX = "…";
@@ -72,6 +72,7 @@ public class TextInput {
 
         //g.drawImage(imgs[index], xPos, yPos - yOffestCenter, bounds.width, bounds.height, null);
         Color old = g.getColor();
+        //g.fillRect(xPos, yPos, TI_WIDTH, TI_HEIGHT);
         g.setColor(Color.black);
 
         g.setFont(font);
@@ -215,7 +216,7 @@ public class TextInput {
     public static class TextInputValues {
 
         public final static float SCALE = 1;
-        public final static int TI_WIDTH_DEFAULT = 404;
+        public final static int TI_WIDTH_DEFAULT = 474;
         public final static int TI_HEIGHT_DEFAULT = 44;
         public static int TI_WIDTH = (int) (TI_WIDTH_DEFAULT * SCALE);
         public static int TI_HEIGHT = (int) (TI_HEIGHT_DEFAULT * SCALE);
