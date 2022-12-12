@@ -35,7 +35,6 @@ public class GuessTheWordClient {
     public static void main(String[] args) throws IOException {
         GuessTheWordClient client = new GuessTheWordClient();
 
-        client.nomeUtente();
         //thread1 riceve
         client.readMessageThread();
 
@@ -138,10 +137,8 @@ public class GuessTheWordClient {
         output.writeUTF(messaggio);
     }
 
-    private void nomeUtente() throws IOException {
-        System.out.println("Come vuoi essere salvato nella classifica?");
-        String nome = scan.nextLine();
-        output.writeUTF("(" + nome);
+    private void log(String msg) {
+        System.out.println(msg);
     }
 
 }
