@@ -6,6 +6,7 @@ package guessthewordclient;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -35,7 +36,8 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
      */
     DataOutputStream output;
     boolean playing = true;
-    
+    int tentativi = 0;
+    int parolaN = 1;
     
 
     public GameFrame(DataOutputStream output) {
@@ -126,6 +128,28 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
         g.drawImage(getImage(TIZIO), 500+(int) (mov%14-(mov%14-7)*(mov%14-7>0?2:0)), 190+(int) (mov%10-(mov%10-5)*(mov%10-5>0?2:0)), 250,250 , this);
         g.drawImage(getImage(SCRIVANIA),341,335,495,184, this);
         
+        //g.setColor(new Color(37,60,125));
+        g.setPaint(new GradientPaint(120, 70, new Color(13, 16, 57),120, 170, new Color(37,60,125)));
+        g.fillRoundRect(120, 70, 100, 100, 30, 30);
+        g.setColor(new Color(149,206,146));
+        g.fillRoundRect(127, 77, 86, 86, 20, 20);
+        g.setColor(Color.BLACK);
+        g.setFont(g.getFont().deriveFont(Font.BOLD,15f));
+        g.drawString("Tentativi:", 137, 95);
+        g.setFont(g.getFont().deriveFont(Font.BOLD,40f));
+        g.drawString(tentativi+"", 147, 145);
+        
+        g.setPaint(new GradientPaint(120, 70, new Color(13, 16, 57),120, 170, new Color(37,60,125)));
+        g.fillRoundRect(970, 70, 100, 100, 30, 30);
+        g.setColor(new Color(149,206,146));
+        g.fillRoundRect(977, 77, 86, 86, 20, 20);
+        g.setColor(Color.BLACK);
+        g.setFont(g.getFont().deriveFont(Font.BOLD,15f));
+        g.drawString("Parola N:", 987, 95);
+        g.setFont(g.getFont().deriveFont(Font.BOLD,40f));
+        g.drawString(parolaN+"", 1007, 145);
+        
+        
         g.setFont(textFont);
         //g.drawString("Frames: " + frames, 60, 50);
         g.setFont(g.getFont().deriveFont(30f));
@@ -203,6 +227,7 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
                 ti.setColorMap("");
                 if(gotIt){
                     charStatus.clear();
+                    parolaN++;
                     for(int i = 0; i < foundChars.length; i++){
                         foundChars[i] = ' ';
                     }
@@ -213,6 +238,7 @@ public class GameFrame extends javax.swing.JFrame implements KeyListener,FocusLi
                 try {
                     gotIt = null;
                     output.writeUTF(ti.getText());
+                    tentativi++;
                     result = true;
                     return;
                 } catch (IOException ex) {

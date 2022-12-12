@@ -8,8 +8,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.LinkedList;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
+import utils.Utils.Tuple;
 
 /**
  *
@@ -46,6 +50,27 @@ public class Classifica extends javax.swing.JFrame {
         System.out.println("Classifica:");
         classifica=input.readUTF();
         System.out.println(classifica);
+        LinkedList<Tuple<String,Integer>> punteggi = new LinkedList<>();
+        String[] lines = classifica.split("\n");
+        for(String line : lines){
+            try{
+                String[] values = line.split(";");
+                punteggi.add( new Tuple<String,Integer>(values[0], Integer.valueOf(values[1])));
+                
+            }catch(Exception ex){
+                Logger.getLogger(Classifica.class.getName()).log(Level.WARNING, "Punteggio della classifica non valido!");
+            }
+        }
+        punteggi.sort((Tuple<String, Integer> o1, Tuple<String, Integer> o2) -> o1.y-o2.y);
+        DefaultTableModel TableModel = (DefaultTableModel) jTable1.getModel();
+        
+        punteggi.forEach((t) -> {
+            Vector row = new Vector();
+            row.add(t.x);
+            row.add(t.y);
+            TableModel.addRow(row);
+        });
+        this.setVisible(true);
     }
 
     /**
@@ -61,6 +86,10 @@ public class Classifica extends javax.swing.JFrame {
         dialogNameField = new javax.swing.JTextField();
         dialogOkButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        label1 = new java.awt.Label();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        button1 = new java.awt.Button();
 
         jDialog1.setLocationByPlatform(true);
         jDialog1.getRootPane().setDefaultButton(dialogOkButton);
@@ -109,16 +138,63 @@ public class Classifica extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setLocationByPlatform(true);
+        setResizable(false);
+
+        label1.setFont(new java.awt.Font("Dialog", 0, 48)); // NOI18N
+        label1.setText("Classifica del Server");
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Username", "Tentativi"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable1.getTableHeader().setResizingAllowed(false);
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jTable1);
+
+        button1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        button1.setLabel("Ok!");
+        button1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                button1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 606, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(50, 50, 50)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 520, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(label1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(button1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -139,12 +215,20 @@ public class Classifica extends javax.swing.JFrame {
         
     }//GEN-LAST:event_dialogOkButtonActionPerformed
 
+    private void button1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button1ActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_button1ActionPerformed
+
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private java.awt.Button button1;
     private javax.swing.JTextField dialogNameField;
     private javax.swing.JButton dialogOkButton;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
+    private java.awt.Label label1;
     // End of variables declaration//GEN-END:variables
 }
