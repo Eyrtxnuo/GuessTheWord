@@ -3,6 +3,7 @@ package GuessTheWordClient;
 import guessthewordclient.Classifica;
 import guessthewordclient.GameFrame;
 import guessthewordclient.KeyboardKey;
+import java.awt.event.ActionEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,24 +25,25 @@ public class GuessTheWordClient {
     GameFrame frame;
 
     public GuessTheWordClient() throws UnknownHostException, IOException {
-        ip = InetAddress.getLocalHost();
+        showIpDialog();
+        /*ip = InetAddress.getLocalHost();
         socket = new Socket(ip, 5763);
         input = new DataInputStream(socket.getInputStream());
         output = new DataOutputStream(socket.getOutputStream());
-        frame = new GameFrame(output);
+        frame = new GameFrame(output);*/
         //scan = new Scanner(System.in);
     }
 
     public static void main(String[] args) throws IOException {
         GuessTheWordClient client = new GuessTheWordClient();
-
+        /*
         //thread1 riceve
         client.readMessageThread();
 
         //thread2 invia
         //client.writeMessageThread();//implementato nella grafica
         
-        client.frame.setVisible(true);
+        client.frame.setVisible(true);*/
     }
 
     
@@ -139,6 +141,78 @@ public class GuessTheWordClient {
 
     private void log(String msg) {
         System.out.println(msg);
+    }
+
+    private void showIpDialog() {
+        var jDialog1 =  new javax.swing.JDialog();
+        var dialogIPField = new javax.swing.JTextField();
+        var dialogOkButton = new javax.swing.JButton();
+        var jLabel1 = new javax.swing.JLabel();
+        jDialog1.setLocationByPlatform(true);
+        jDialog1.getRootPane().setDefaultButton(dialogOkButton);
+
+        dialogIPField.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+
+        dialogOkButton.setText("Ok");
+        dialogOkButton.setDefaultCapable(false);
+        dialogOkButton.setInheritsPopupMenu(true);
+        dialogOkButton.setSelected(true);
+        dialogOkButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dialogOkButtonActionPerformed(evt);
+            }
+
+            private void dialogOkButtonActionPerformed(ActionEvent evt) {
+                try {
+                    ip = InetAddress.getByName(dialogIPField.getText());
+                    socket = new Socket(ip, 5763);
+                    input = new DataInputStream(socket.getInputStream());
+                    output = new DataOutputStream(socket.getOutputStream());
+                    frame = new GameFrame(output);
+                    readMessageThread();
+                    frame.setVisible(true);
+                    jDialog1.setVisible(false);
+                } catch (UnknownHostException ex) {
+                    Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(GuessTheWordClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        jLabel1.setText("Inserisci l'IP");
+        
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(dialogIPField)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialog1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(dialogOkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(dialogIPField, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(dialogOkButton, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jDialog1.setResizable(false);
+        jDialog1.pack();
+        jDialog1.setVisible(true);
     }
 
 }

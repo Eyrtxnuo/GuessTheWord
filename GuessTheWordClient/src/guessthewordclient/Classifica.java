@@ -92,6 +92,7 @@ public class Classifica extends javax.swing.JFrame {
         button1 = new java.awt.Button();
 
         jDialog1.setLocationByPlatform(true);
+        jDialog1.setResizable(false);
         jDialog1.getRootPane().setDefaultButton(dialogOkButton);
 
         dialogNameField.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N

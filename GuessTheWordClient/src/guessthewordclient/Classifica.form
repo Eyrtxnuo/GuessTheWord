@@ -5,6 +5,7 @@
     <Container class="javax.swing.JDialog" name="jDialog1">
       <Properties>
         <Property name="locationByPlatform" type="boolean" value="true"/>
+        <Property name="resizable" type="boolean" value="false"/>
       </Properties>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="jDialog1.getRootPane().setDefaultButton(dialogOkButton);"/>
